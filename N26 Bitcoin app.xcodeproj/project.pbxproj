@@ -19,19 +19,11 @@
 			remoteGlobalIDString = B48C70832DDB913B00370520;
 			remoteInfo = "N26 Bitcoin app";
 		};
-		B48C709C2DDB913B00370520 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B48C707C2DDB913B00370520 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B48C70832DDB913B00370520;
-			remoteInfo = "N26 Bitcoin app";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		B48C70842DDB913B00370520 /* N26 Bitcoin app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "N26 Bitcoin app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B48C70912DDB913B00370520 /* N26 Bitcoin appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "N26 Bitcoin appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B48C709B2DDB913B00370520 /* N26 Bitcoin appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "N26 Bitcoin appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -43,11 +35,6 @@
 		B48C70942DDB913B00370520 /* N26 Bitcoin appTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "N26 Bitcoin appTests";
-			sourceTree = "<group>";
-		};
-		B48C709E2DDB913B00370520 /* N26 Bitcoin appUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "N26 Bitcoin appUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,13 +56,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B48C70982DDB913B00370520 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -84,7 +64,6 @@
 			children = (
 				B48C70862DDB913B00370520 /* N26 Bitcoin app */,
 				B48C70942DDB913B00370520 /* N26 Bitcoin appTests */,
-				B48C709E2DDB913B00370520 /* N26 Bitcoin appUITests */,
 				B48C70852DDB913B00370520 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -94,7 +73,6 @@
 			children = (
 				B48C70842DDB913B00370520 /* N26 Bitcoin app.app */,
 				B48C70912DDB913B00370520 /* N26 Bitcoin appTests.xctest */,
-				B48C709B2DDB913B00370520 /* N26 Bitcoin appUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -149,29 +127,6 @@
 			productReference = B48C70912DDB913B00370520 /* N26 Bitcoin appTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		B48C709A2DDB913B00370520 /* N26 Bitcoin appUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B48C70AB2DDB913B00370520 /* Build configuration list for PBXNativeTarget "N26 Bitcoin appUITests" */;
-			buildPhases = (
-				B48C70972DDB913B00370520 /* Sources */,
-				B48C70982DDB913B00370520 /* Frameworks */,
-				B48C70992DDB913B00370520 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B48C709D2DDB913B00370520 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				B48C709E2DDB913B00370520 /* N26 Bitcoin appUITests */,
-			);
-			name = "N26 Bitcoin appUITests";
-			packageProductDependencies = (
-			);
-			productName = "N26 Bitcoin appUITests";
-			productReference = B48C709B2DDB913B00370520 /* N26 Bitcoin appUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -186,10 +141,6 @@
 						CreatedOnToolsVersion = 16.3;
 					};
 					B48C70902DDB913B00370520 = {
-						CreatedOnToolsVersion = 16.3;
-						TestTargetID = B48C70832DDB913B00370520;
-					};
-					B48C709A2DDB913B00370520 = {
 						CreatedOnToolsVersion = 16.3;
 						TestTargetID = B48C70832DDB913B00370520;
 					};
@@ -215,7 +166,6 @@
 			targets = (
 				B48C70832DDB913B00370520 /* N26 Bitcoin app */,
 				B48C70902DDB913B00370520 /* N26 Bitcoin appTests */,
-				B48C709A2DDB913B00370520 /* N26 Bitcoin appUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -229,13 +179,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B48C708F2DDB913B00370520 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B48C70992DDB913B00370520 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -259,13 +202,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B48C70972DDB913B00370520 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -273,11 +209,6 @@
 			isa = PBXTargetDependency;
 			target = B48C70832DDB913B00370520 /* N26 Bitcoin app */;
 			targetProxy = B48C70922DDB913B00370520 /* PBXContainerItemProxy */;
-		};
-		B48C709D2DDB913B00370520 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B48C70832DDB913B00370520 /* N26 Bitcoin app */;
-			targetProxy = B48C709C2DDB913B00370520 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -472,13 +403,17 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "thedmytro.testprojects.N26-Bitcoin-appTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/N26 Bitcoin app.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/N26 Bitcoin app";
 			};
 			name = Debug;
@@ -490,46 +425,18 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "thedmytro.testprojects.N26-Bitcoin-appTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/N26 Bitcoin app.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/N26 Bitcoin app";
-			};
-			name = Release;
-		};
-		B48C70AC2DDB913B00370520 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "thedmytro.testprojects.N26-Bitcoin-appUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "N26 Bitcoin app";
-			};
-			name = Debug;
-		};
-		B48C70AD2DDB913B00370520 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "thedmytro.testprojects.N26-Bitcoin-appUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "N26 Bitcoin app";
 			};
 			name = Release;
 		};
@@ -559,15 +466,6 @@
 			buildConfigurations = (
 				B48C70A92DDB913B00370520 /* Debug */,
 				B48C70AA2DDB913B00370520 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B48C70AB2DDB913B00370520 /* Build configuration list for PBXNativeTarget "N26 Bitcoin appUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B48C70AC2DDB913B00370520 /* Debug */,
-				B48C70AD2DDB913B00370520 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
