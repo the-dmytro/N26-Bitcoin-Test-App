@@ -26,7 +26,7 @@ extension Endpoint {
         }
         
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
-        components.path += path  // Now properly appends to /api/v3
+        components.path += path
         components.queryItems = queryItems
 
         guard let url = components.url else {
@@ -68,13 +68,13 @@ enum CoinGeckoEndpoint: Endpoint {
     var path: String {
         switch self {
         case .historicalPrice:
-            return "/coins/bitcoin/market_chart"
+            return .bitcoinMarketChartPath
         case .todayPrice:
-            return "/coins/bitcoin/market_chart"
+            return .bitcoinMarketChartPath
         case .priceAtDate:
-            return "/coins/bitcoin/history"
+            return .bitcoinHistoryPath
         case .currentPrice:
-            return "/simple/price"
+            return .simplePricePath
         }
     }
 
@@ -109,6 +109,8 @@ enum CoinGeckoEndpoint: Endpoint {
         }
     }
 }
+
+// MARK: - Private Extensions
 
 fileprivate extension String {
     static let ids = "ids"
