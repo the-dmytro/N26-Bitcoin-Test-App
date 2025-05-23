@@ -125,12 +125,6 @@ fileprivate extension String {
     static let falseValue = "false"
 }
 
-enum Currency: String {
-    case usd = "usd"
-    case eur = "eur"
-    case gbp = "gbp"
-}
-
 fileprivate extension URLQueryItem {
     static let ids = URLQueryItem(name: .ids, value: .bitcoin)
     
