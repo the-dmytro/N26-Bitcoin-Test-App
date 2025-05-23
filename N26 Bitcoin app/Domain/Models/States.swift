@@ -7,24 +7,24 @@
 
 import Foundation
 
-public struct HistoricalPriceState: State {
-    public var prices: [Price] = []
-    public var loadingState: LoadingState = .notLoaded
+struct HistoricalPriceState: State {
+    var prices: [Price] = []
+    var loadingState: LoadingState = .notLoaded
 }
 
-public struct TodayPriceState: State {
-    public var price: Price?
-    public var loadingState: LoadingState = .notLoaded
+struct TodayPriceState: State {
+    var price: Price?
+    var loadingState: LoadingState = .notLoaded
 }
 
-public struct SelectedDayPriceState: State {
-    public var date: Date?
-    public var prices: [Price] = []
-    public var loadingState: LoadingState = .notLoaded
+struct SelectedDayPriceState: State {
+    var date: Date?
+    var prices: [Price] = []
+    var loadingState: LoadingState = .notLoaded
 }
 
-public struct AppState: State {
-    public var historicalPrice = HistoricalPriceState()
-    public var todayPrice      = TodayPriceState()
-    public var selectedDay     = SelectedDayPriceState()
+struct AppState: State {
+    var historicalPrice = HistoricalPriceState()
+    var todayPrice      = TodayPriceState()
+    var selectedDay     = SelectedDayPriceState()
 }

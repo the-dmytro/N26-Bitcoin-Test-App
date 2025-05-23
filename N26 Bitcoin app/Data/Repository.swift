@@ -8,16 +8,6 @@
 import Foundation
 import Combine
 
-// MARK: - Core Protocols
-protocol State {}
-
-protocol Action {}
-
-protocol Reducer {
-    associatedtype AppStateType: State
-    func reduce(state: AppStateType, action: Action) -> AppStateType
-}
-
 // MARK: - Repository
 @MainActor
 class Repository<AppStateType: State, AppReducerType: Reducer>: ObservableObject where AppReducerType.AppStateType == AppStateType {

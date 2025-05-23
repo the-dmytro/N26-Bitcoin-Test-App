@@ -7,20 +7,35 @@
 
 import Foundation
 
-public enum Currency: String {
+enum Currency: String {
     case usd = "usd"
     case eur = "eur"
     case gbp = "gbp"
 }
 
-public struct Price {
-    public let value: Double
-    public let currency: Currency
+struct Price: Equatable {
+    let value: Double
+    let currency: Currency
 }
 
-public enum LoadingState {
+enum LoadingState: Equatable {
     case notLoaded
     case loading
     case loaded
-    case error(Error)
+    case loadingError(Error)
+
+    static func == (lhs: LoadingState, rhs: LoadingState) -> Bool {
+        switch (lhs, rhs) {
+        case (.notLoaded, .notLoaded):
+            return true
+        case (.loading, .loading):
+            return true
+        case (.loaded, .loaded):
+            return true
+        case (.loadingError(let lhsError), .loadingError(let rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription // Comparison by localizedDescription for simplicity of the test app
+        default:
+            return false
+        }
+    }
 }
