@@ -91,7 +91,7 @@ class NetworkingSpecs: QuickSpec {
             }
             
             describe("priceAtDate") {
-                let endpoint = CoinGeckoEndpoint.priceAtDate(date: .testDate, currencies: currencies)
+                let endpoint = CoinGeckoEndpoint.priceAtDate(date: .testDate)
                 
                 it("should have correct path") {
                     expect(endpoint.path).to(equal(.bitcoinHistoryPath))
