@@ -21,8 +21,12 @@ protocol Endpoint {
 
 extension Endpoint {
     func makeRequest() throws -> URLRequest {
+        guard let baseURL = CoinGeckoAPIConfiguration().baseURLComponents.url else {
+            throw URLError(.badURL)
+        }
+        
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
-        components.path = path
+        components.path += path  // Now properly appends to /api/v3
         components.queryItems = queryItems
 
         guard let url = components.url else {
@@ -37,7 +41,14 @@ extension Endpoint {
 }
 
 struct CoinGeckoAPIConfiguration {
-    let baseURL = URL(string: .coinGeckoBaseURL)!
+    var baseURLComponents: URLComponents {
+        var components = URLComponents()
+        components.scheme = .coinGeckoScheme
+        components.host = .coinGeckoHost
+        components.path = .coinGeckoAPIVersion
+        return components
+    }
+    
     let defaultHeaders = [String.headerAccept: String.contentTypeJSON]
 }
 
@@ -48,7 +59,10 @@ enum CoinGeckoEndpoint: Endpoint {
     case currentPrice(currencies: [Currency])
 
     var baseURL: URL {
-        CoinGeckoAPIConfiguration().baseURL
+        guard let url = CoinGeckoAPIConfiguration().baseURLComponents.url else {
+            fatalError("Invalid base URL configuration")
+        }
+        return url
     }
 
     var path: String {

@@ -17,10 +17,15 @@ extension String {
     // MARK: - HTTP Headers
     static let headerAccept = "Accept"
     
-    // MARK: - API Endpoints
-    static let coinGeckoBaseURL = "https://api.coingecko.com/api/v3"
+    // MARK: - API URL Components
+    static let coinGeckoScheme = "https"
+    static let coinGeckoHost = "api.coingecko.com"
+    static let coinGeckoAPIVersion = "/api/v3"
+    
+    // MARK: - API Endpoint Paths
     static let bitcoinMarketChartPath = "/coins/bitcoin/market_chart"
     static let bitcoinHistoryPath = "/coins/bitcoin/history"
+    static let simplePricePath = "/simple/price"
     
     // MARK: - Query Parameter Names
     static let queryParamIds = "ids"
