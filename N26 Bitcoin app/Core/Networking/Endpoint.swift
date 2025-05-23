@@ -37,15 +37,15 @@ extension Endpoint {
 }
 
 struct CoinGeckoAPIConfiguration {
-    let baseURL = URL(string: "https://api.coingecko.com/api/v3")!
-    let defaultHeaders = ["Accept": "application/json"]
+    let baseURL = URL(string: .coinGeckoBaseURL)!
+    let defaultHeaders = [String.headerAccept: String.contentTypeJSON]
 }
 
 enum CoinGeckoEndpoint: Endpoint {
-    case fetchBitcoinPrice
-    case historicalPrice(days: UInt)
+    case historicalPrice(days: UInt, currencies: [Currency])
     case priceAtDate(date: String)
-    case todayPrice
+    case todayPrice(currencies: [Currency])
+    case currentPrice(currencies: [Currency])
 
     var baseURL: URL {
         CoinGeckoAPIConfiguration().baseURL
@@ -53,14 +53,14 @@ enum CoinGeckoEndpoint: Endpoint {
 
     var path: String {
         switch self {
-        case .fetchBitcoinPrice:
-            return "/simple/price"
         case .historicalPrice:
             return "/coins/bitcoin/market_chart"
         case .todayPrice:
             return "/coins/bitcoin/market_chart"
         case .priceAtDate:
             return "/coins/bitcoin/history"
+        case .currentPrice:
+            return "/simple/price"
         }
     }
 
@@ -72,25 +72,25 @@ enum CoinGeckoEndpoint: Endpoint {
 
     var queryItems: [URLQueryItem]? {
         switch self {
-        case .fetchBitcoinPrice:
+        case .historicalPrice(let days, let currencies):
             return [
-                .ids,
-                .vsCurrency
-            ]
-        case .historicalPrice(let days):
-            return [
-                .vsCurrency,
+                .vsCurrency(currencies),
                 .days(days)
             ]
-        case .todayPrice:
+        case .todayPrice(let currencies):
             return [
-                .vsCurrency,
+                .vsCurrency(currencies),
                 .days(1)
             ]
         case .priceAtDate(let date):
             return [
                 .date(date),
                 .localization
+            ]
+        case .currentPrice(let currencies):
+            return [
+                .ids,
+                .vsCurrency(currencies)
             ]
         }
     }

@@ -26,9 +26,22 @@
 		B48C70912DDB913B00370520 /* N26 Bitcoin appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "N26 Bitcoin appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B4DFC3CF2DE083FC00882435 /* Exceptions for "N26 Bitcoin app" folder in "N26 Bitcoin appTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Core/Extensions/String+Constants.swift",
+			);
+			target = B48C70902DDB913B00370520 /* N26 Bitcoin appTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B48C70862DDB913B00370520 /* N26 Bitcoin app */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B4DFC3CF2DE083FC00882435 /* Exceptions for "N26 Bitcoin app" folder in "N26 Bitcoin appTests" target */,
+			);
 			path = "N26 Bitcoin app";
 			sourceTree = "<group>";
 		};
