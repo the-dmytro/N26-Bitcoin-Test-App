@@ -14,7 +14,6 @@ class Repository<AppStateType: State, AppReducerType: Reducer>: ObservableObject
     @Published private(set) var state: AppStateType
     
     private let reducer: AppReducerType
-    private var cancellables = Set<AnyCancellable>()
     
     init(initialState: AppStateType, reducer: AppReducerType) {
         self.state = initialState
