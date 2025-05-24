@@ -36,3 +36,5 @@ extension Repository {
             .eraseToAnyPublisher()
     }
 }
+
+typealias AppRepository = Repository<AppState, AppReducer>

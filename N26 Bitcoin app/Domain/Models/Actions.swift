@@ -8,19 +8,19 @@
 import Foundation
 
 enum HistoricalPriceAction: Action {
-    case load
-    case success([Price])
+    case load(days: UInt, currencies: [Currency])
+    case success(prices: [Price])
     case failure(Error)
 }
 
-enum TodayPriceAction: Action {
-    case load
-    case success(Price)
+enum CurrentPriceAction: Action {
+    case load(currencies: [Currency])
+    case success(price: Price)
     case failure(Error)
 }
 
 enum SelectedDayPriceAction: Action {
-    case select(Date)
-    case success([Price])
+    case select(date: Date)
+    case success(prices: [Price])
     case failure(Error)
 }

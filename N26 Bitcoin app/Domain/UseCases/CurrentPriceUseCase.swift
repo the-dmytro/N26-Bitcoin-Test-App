@@ -1,14 +1,14 @@
 //
-//  DayPriceUseCase.swift
+//  CurrentPriceUseCase.swift
 //  N26 Bitcoin app
 //
-//  Created by Dmytro Kopanytsia on 19/5/25.
+//  Created by Dmytro Kopanytsia on 24/5/25.
 //
 
 import Foundation
 
-struct DayPriceUseCase: UseCase {
-    typealias Input = Date
+struct CurrentPriceUseCase: UseCase {
+    typealias Input = [Currency]
     typealias Output = Void
     typealias RepoStateType = AppState
     typealias RepoReducerType = AppReducer
@@ -21,7 +21,7 @@ struct DayPriceUseCase: UseCase {
         self.apiClient = apiClient
     }
 
-    func execute(input: Date) async -> Void {
+    func execute(input: [Currency]) async -> Void {
         return ()
     }
 }

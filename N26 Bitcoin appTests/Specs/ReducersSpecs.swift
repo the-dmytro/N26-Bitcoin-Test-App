@@ -22,13 +22,13 @@ class ReducersSpecs: QuickSpec {
             }
 
             it("sets loadingState to loading on load action") {
-                let newState = reducer.reduce(state: state, action: HistoricalPriceAction.load)
+                let newState = reducer.reduce(state: state, action: HistoricalPriceAction.load(days: 7, currencies: [.usd]))
                 expect(newState.loadingState).to(equal(LoadingState.loading))
             }
 
             it("updates prices and sets loadingState to success on success action") {
                 let prices = [Price(value: 1.0, currency: .usd)]
-                let newState = reducer.reduce(state: state, action: HistoricalPriceAction.success(prices))
+                let newState = reducer.reduce(state: state, action: HistoricalPriceAction.success(prices: prices))
                 expect(newState.prices).to(equal(prices))
                 expect(newState.loadingState).to(equal(LoadingState.loaded))
             }
@@ -40,29 +40,29 @@ class ReducersSpecs: QuickSpec {
             }
         }
 
-        describe("TodayPriceReducer") {
-            let reducer = TodayPriceReducer()
-            var state: TodayPriceState!
+        describe("CurrentPriceReducer") {
+            let reducer = CurrentPriceReducer()
+            var state: CurrentPriceState!
 
             beforeEach {
-                state = TodayPriceState()
+                state = CurrentPriceState()
             }
 
             it("sets loadingState to loading on load action") {
-                let newState = reducer.reduce(state: state, action: TodayPriceAction.load)
+                let newState = reducer.reduce(state: state, action: CurrentPriceAction.load(currencies: [.usd]))
                 expect(newState.loadingState).to(equal(LoadingState.loading))
             }
 
             it("updates price and sets loadingState to success on success action") {
                 let price = Price(value: 2.0, currency: .eur)
-                let newState = reducer.reduce(state: state, action: TodayPriceAction.success(price))
+                let newState = reducer.reduce(state: state, action: CurrentPriceAction.success(price: price))
                 expect(newState.price).to(equal(price))
                 expect(newState.loadingState).to(equal(LoadingState.loaded))
             }
 
             it("sets loadingState to failure on failure action") {
                 let expectedError = MockError.test
-                let newState = reducer.reduce(state: state, action: TodayPriceAction.failure(expectedError))
+                let newState = reducer.reduce(state: state, action: CurrentPriceAction.failure(expectedError))
                 expect(newState.loadingState).to(equal(LoadingState.loadingError(expectedError)))
             }
         }
@@ -111,9 +111,9 @@ class ReducersSpecs: QuickSpec {
                 expect(newState.selectedDay.loadingState).to(equal(LoadingState.notLoaded))
             }
 
-            it("forwards TodayPriceAction to TodayPriceReducer") {
+            it("forwards TodayPriceAction to CurrentPriceReducer") {
                 let price = Price(value: 4.0, currency: .usd)
-                let newState = reducer.reduce(state: appState, action: TodayPriceAction.success(price))
+                let newState = reducer.reduce(state: appState, action: CurrentPriceAction.success(price: price))
                 expect(newState.todayPrice.price).to(equal(price))
                 expect(newState.todayPrice.loadingState).to(equal(LoadingState.loaded))
                 expect(newState.historicalPrice.loadingState).to(equal(LoadingState.notLoaded))

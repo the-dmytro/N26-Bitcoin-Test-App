@@ -12,7 +12,7 @@ struct HistoricalPriceState: State {
     var loadingState: LoadingState = .notLoaded
 }
 
-struct TodayPriceState: State {
+struct CurrentPriceState: State {
     var price: Price?
     var loadingState: LoadingState = .notLoaded
 }
@@ -25,6 +25,6 @@ struct SelectedDayPriceState: State {
 
 struct AppState: State {
     var historicalPrice = HistoricalPriceState()
-    var todayPrice      = TodayPriceState()
+    var currentPrice    = CurrentPriceState()
     var selectedDay     = SelectedDayPriceState()
 }

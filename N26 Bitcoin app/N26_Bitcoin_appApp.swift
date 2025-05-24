@@ -9,6 +9,12 @@ import SwiftUI
 
 @main
 struct N26_Bitcoin_appApp: App {
+    let container = Container()
+
+    init() {
+        RootAssembly().assemble(into: container)
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

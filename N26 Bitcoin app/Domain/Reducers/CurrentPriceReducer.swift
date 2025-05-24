@@ -1,5 +1,5 @@
 //
-//  TodayPriceReducer.swift
+//  CurrentPriceReducer.swift
 //  N26 Bitcoin app
 //
 //  Created by Dmytro Kopanytsia on 23/5/25.
@@ -7,16 +7,16 @@
 
 import Foundation
 
-struct TodayPriceReducer: Reducer {
-    typealias AppStateType = TodayPriceState
+struct CurrentPriceReducer: Reducer {
+    typealias AppStateType = CurrentPriceState
 
-    func reduce(state: TodayPriceState, action: Action) -> TodayPriceState {
+    func reduce(state: CurrentPriceState, action: Action) -> CurrentPriceState {
         var state = state
 
         switch action {
-        case let action as TodayPriceAction:
+        case let action as CurrentPriceAction:
             switch action {
-            case .load:
+            case .load(let currencies):
                 state.loadingState = .loading
             case .success(let price):
                 state.price = price

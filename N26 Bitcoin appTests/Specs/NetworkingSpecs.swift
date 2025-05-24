@@ -104,22 +104,6 @@ class NetworkingSpecs: QuickSpec {
                 }
             }
             
-            describe("todayPrice") {
-                let endpoint = CoinGeckoEndpoint.todayPrice(currencies: currencies)
-                
-                it("should have correct path") {
-                    expect(endpoint.path).to(equal(.bitcoinMarketChartPath))
-                }
-                
-                it("should have correct query items with 1 day") {
-                    let queryItems = endpoint.queryItems
-                    expect(queryItems).toNot(beNil())
-                    
-                    let daysItem = queryItems?.first { $0.name == .queryParamDays }
-                    expect(daysItem?.value).to(equal("1"))
-                }
-            }
-            
             describe("priceAtDate") {
                 let endpoint = CoinGeckoEndpoint.priceAtDate(date: .testDate)
                 

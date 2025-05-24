@@ -55,7 +55,6 @@ struct CoinGeckoAPIConfiguration {
 enum CoinGeckoEndpoint: Endpoint {
     case historicalPrice(days: UInt, currencies: [Currency])
     case priceAtDate(date: String)
-    case todayPrice(currencies: [Currency])
     case currentPrice(currencies: [Currency])
 
     var baseURL: URL {
@@ -68,8 +67,6 @@ enum CoinGeckoEndpoint: Endpoint {
     var path: String {
         switch self {
         case .historicalPrice:
-            return .bitcoinMarketChartPath
-        case .todayPrice:
             return .bitcoinMarketChartPath
         case .priceAtDate:
             return .bitcoinHistoryPath
@@ -90,11 +87,6 @@ enum CoinGeckoEndpoint: Endpoint {
             return [
                 .vsCurrency(currencies),
                 .days(days)
-            ]
-        case .todayPrice(let currencies):
-            return [
-                .vsCurrency(currencies),
-                .days(1)
             ]
         case .priceAtDate(let date):
             return [

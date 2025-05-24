@@ -8,5 +8,46 @@
 import Foundation
 
 protocol Assembly {
+    @MainActor
     func assemble(into container: Container)
+}
+
+struct NetworkAssembly: Assembly {
+    @MainActor
+    func assemble(into container: Container) {
+        container.register(APIClient.self) { URLSessionAPIClient() }
+    }
+}
+
+struct RepositoryAssembly: Assembly {
+    @MainActor
+    func assemble(into container: Container) {
+        container.register(AppRepository.self) {
+            Repository(initialState: AppState(), reducer: AppReducer())
+        }
+    }
+}
+
+struct UseCaseAssembly: Assembly {
+    @MainActor
+    func assemble(into container: Container) {
+        container.register(DayPriceUseCase.self) {
+            DayPriceUseCase(repository: container.resolve(), apiClient: container.resolve())
+        }
+        container.register(HistoricalPriceUseCase.self) {
+            HistoricalPriceUseCase(repository: container.resolve(), apiClient: container.resolve())
+        }
+        container.register(CurrentPriceUseCase.self) {
+            CurrentPriceUseCase(repository: container.resolve(), apiClient: container.resolve())
+        }
+    }
+}
+
+struct RootAssembly: Assembly {
+    @MainActor
+    func assemble(into container: Container) {
+        NetworkAssembly().assemble(into: container)
+        RepositoryAssembly().assemble(into: container)
+        UseCaseAssembly().assemble(into: container)
+    }
 }
