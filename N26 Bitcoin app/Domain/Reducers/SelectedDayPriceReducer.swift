@@ -16,7 +16,7 @@ struct SelectedDayPriceReducer: Reducer {
         switch action {
         case let action as SelectedDayPriceAction:
             switch action {
-            case .select(let date):
+            case .load(let date):
                 state.date = date
                 state.loadingState = .loading
             case .success(let prices):

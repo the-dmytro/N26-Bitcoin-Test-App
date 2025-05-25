@@ -22,7 +22,7 @@ class ReducersSpecs: QuickSpec {
             }
 
             it("sets loadingState to loading on load action") {
-                let newState = reducer.reduce(state: state, action: HistoricalPriceAction.load(days: 7, currencies: [.usd]))
+                let newState = reducer.reduce(state: state, action: HistoricalPriceAction.load(days: 7, currency: .usd))
                 expect(newState.loadingState).to(equal(LoadingState.loading))
             }
 
@@ -49,14 +49,14 @@ class ReducersSpecs: QuickSpec {
             }
 
             it("sets loadingState to loading on load action") {
-                let newState = reducer.reduce(state: state, action: CurrentPriceAction.load(currencies: [.usd]))
+                let newState = reducer.reduce(state: state, action: CurrentPriceAction.load(currencies: [.usd], precision: 2))
                 expect(newState.loadingState).to(equal(LoadingState.loading))
             }
 
             it("updates price and sets loadingState to success on success action") {
                 let price = Price(value: 2.0, currency: .eur)
-                let newState = reducer.reduce(state: state, action: CurrentPriceAction.success(price: price))
-                expect(newState.price).to(equal(price))
+                let newState = reducer.reduce(state: state, action: CurrentPriceAction.success(prices: [price]))
+                expect(newState.prices).to(equal([price]))
                 expect(newState.loadingState).to(equal(LoadingState.loaded))
             }
 
@@ -77,7 +77,7 @@ class ReducersSpecs: QuickSpec {
 
             it("sets loadingState to loading and updates date on select action") {
                 let date = Date()
-                let newState = reducer.reduce(state: state, action: SelectedDayPriceAction.select(date: date))
+                let newState = reducer.reduce(state: state, action: SelectedDayPriceAction.load(date: date))
                 expect(newState.loadingState).to(equal(LoadingState.loading))
                 expect(newState.date).to(equal(date))
             }
@@ -106,17 +106,17 @@ class ReducersSpecs: QuickSpec {
 
             it("forwards HistoricalPriceAction to HistoricalPriceReducer") {
                 let testDays: UInt = 5
-                let testCurrencies: [Currency] = [.eur]
-                let newState = reducer.reduce(state: appState, action: HistoricalPriceAction.load(days: testDays, currencies: testCurrencies))
+                let testCurrency: Currency = .eur
+                let newState = reducer.reduce(state: appState, action: HistoricalPriceAction.load(days: testDays, currency: testCurrency))
                 expect(newState.historicalPrice.loadingState).to(equal(LoadingState.loading))
                 expect(newState.currentPrice.loadingState).to(equal(LoadingState.notLoaded)) // Assuming initial state is .idle
                 expect(newState.selectedDay.loadingState).to(equal(LoadingState.notLoaded))
             }
 
             it("forwards CurrentPriceAction to CurrentPriceReducer") {
-                let price = Price(value: 4.0, currency: .usd)
-                let newState = reducer.reduce(state: appState, action: CurrentPriceAction.success(price: price))
-                expect(newState.currentPrice.price).to(equal(price))
+                let prices = [Price(value: 4.0, currency: .usd), Price(value: 5.0, currency: .eur)]
+                let newState = reducer.reduce(state: appState, action: CurrentPriceAction.success(prices: prices))
+                expect(newState.currentPrice.prices).to(equal(prices))
                 expect(newState.currentPrice.loadingState).to(equal(LoadingState.loaded))
                 expect(newState.historicalPrice.loadingState).to(equal(LoadingState.notLoaded))
                 expect(newState.selectedDay.loadingState).to(equal(LoadingState.notLoaded))
@@ -124,7 +124,7 @@ class ReducersSpecs: QuickSpec {
 
             it("forwards SelectedDayPriceAction to SelectedDayPriceReducer") {
                 let date = Date(timeIntervalSince1970: 1000)
-                let newState = reducer.reduce(state: appState, action: SelectedDayPriceAction.select(date: date))
+                let newState = reducer.reduce(state: appState, action: SelectedDayPriceAction.load(date: date))
                 expect(newState.selectedDay.date).to(equal(date))
                 expect(newState.selectedDay.loadingState).to(equal(LoadingState.loading))
                 expect(newState.historicalPrice.loadingState).to(equal(LoadingState.notLoaded))

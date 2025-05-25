@@ -16,10 +16,10 @@ struct CurrentPriceReducer: Reducer {
         switch action {
         case let action as CurrentPriceAction:
             switch action {
-            case .load(let currencies):
+            case .load:
                 state.loadingState = .loading
-            case .success(let price):
-                state.price = price
+            case .success(let prices):
+                state.prices = prices
                 state.loadingState = .loaded
             case .failure(let error):
                 state.loadingState = .loadingError(error)

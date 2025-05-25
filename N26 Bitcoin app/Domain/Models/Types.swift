@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum Coin: String {
+    case bitcoin = "bitcoin"
+}
+
 enum Currency: String {
     case usd = "usd"
     case eur = "eur"

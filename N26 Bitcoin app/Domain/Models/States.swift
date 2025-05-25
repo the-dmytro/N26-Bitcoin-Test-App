@@ -13,7 +13,7 @@ struct HistoricalPriceState: State {
 }
 
 struct CurrentPriceState: State {
-    var price: Price?
+    var prices: [Price] = []
     var loadingState: LoadingState = .notLoaded
 }
 

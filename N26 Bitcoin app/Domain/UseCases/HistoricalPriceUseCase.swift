@@ -10,7 +10,7 @@ import Foundation
 struct HistoricalPriceUseCase: UseCase {
     struct HistoricalPriceInput {
         let days: UInt
-        let currencies: [Currency]
+        let currency: Currency
     }
 
     typealias Input = HistoricalPriceInput
@@ -27,17 +27,13 @@ struct HistoricalPriceUseCase: UseCase {
     }
 
     func execute(input: HistoricalPriceInput) async -> Void {
-        await repository.dispatch(HistoricalPriceAction.load(days: input.days, currencies: input.currencies))
+        await repository.dispatch(HistoricalPriceAction.load(days: input.days, currency: input.currency))
         
-        let result: Result<MarketChartResponse, APIError> = await apiClient.send(CoinGeckoEndpoint.historicalPrice(days: input.days, currencies: input.currencies))
+        let result: Result<MarketChartResponse, APIError> = await apiClient.send(CoinGeckoEndpoint.historicalPrice(days: input.days, currency: input.currency))
 
         switch result {
         case .success(let response):
-            guard let targetCurrency = input.currencies.first else {
-                await repository.dispatch(HistoricalPriceAction.failure(APIError.invalidResponse))
-                return
-            }
-            let prices = response.prices.map { Price(value: $0.price, currency: targetCurrency) }
+            let prices = response.prices.map { Price(value: $0.price, currency: input.currency) }
             await repository.dispatch(HistoricalPriceAction.success(prices: prices))
         case .failure(let error):
             await repository.dispatch(HistoricalPriceAction.failure(error))

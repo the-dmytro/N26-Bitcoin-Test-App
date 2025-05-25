@@ -72,7 +72,7 @@ class NetworkingSpecs: QuickSpec {
             let currencies: [Currency] = [.usd, .eur, .gbp]
             
             describe("historicalPrice") {
-                let endpoint = CoinGeckoEndpoint.historicalPrice(days: 7, currencies: currencies)
+                let endpoint = CoinGeckoEndpoint.historicalPrice(days: 7, currency: .usd)
                 
                 it("should have correct base URL") {
                     let expectedURL = "\(String.coinGeckoScheme)://\(String.coinGeckoHost)\(String.coinGeckoAPIVersion)"
@@ -97,7 +97,7 @@ class NetworkingSpecs: QuickSpec {
                     expect(queryItems?.count).to(equal(2))
                     
                     let vsCurrencyItem = queryItems?.first { $0.name == .queryParamVsCurrency }
-                    expect(vsCurrencyItem?.value).to(equal("usd,eur,gbp"))
+                    expect(vsCurrencyItem?.value).to(equal("usd"))
                     
                     let daysItem = queryItems?.first { $0.name == .queryParamDays }
                     expect(daysItem?.value).to(equal("7"))
@@ -105,7 +105,8 @@ class NetworkingSpecs: QuickSpec {
             }
             
             describe("priceAtDate") {
-                let endpoint = CoinGeckoEndpoint.priceAtDate(date: .testDate)
+                let testDate = Date(timeIntervalSince1970: 1000)
+                let endpoint = CoinGeckoEndpoint.priceAtDate(date: testDate)
                 
                 it("should have correct path") {
                     expect(endpoint.path).to(equal(.bitcoinHistoryPath))
@@ -117,7 +118,7 @@ class NetworkingSpecs: QuickSpec {
                     expect(queryItems?.count).to(equal(2))
                     
                     let dateItem = queryItems?.first { $0.name == .queryParamDate }
-                    expect(dateItem?.value).to(equal(.testDate))
+                    expect(dateItem?.value).to(equal(testDate.ddMMyyyyFormat()))
                     
                     let localizationItem = queryItems?.first { $0.name == .queryParamLocalization }
                     expect(localizationItem?.value).to(equal(.queryValueFalse))
@@ -125,7 +126,8 @@ class NetworkingSpecs: QuickSpec {
             }
             
             describe("currentPrice") {
-                let endpoint = CoinGeckoEndpoint.currentPrice(currencies: currencies)
+                let precision: Int = 2
+                let endpoint = CoinGeckoEndpoint.currentPrice(currencies: currencies, precision: precision)
                 
                 it("should have correct path") {
                     expect(endpoint.path).to(equal(.simplePricePath))
@@ -134,19 +136,22 @@ class NetworkingSpecs: QuickSpec {
                 it("should have correct query items") {
                     let queryItems = endpoint.queryItems
                     expect(queryItems).toNot(beNil())
-                    expect(queryItems?.count).to(equal(2))
+                    expect(queryItems?.count).to(equal(3))
                     
                     let idsItem = queryItems?.first { $0.name == .queryParamIds }
                     expect(idsItem?.value).to(equal(.queryValueBitcoin))
                     
                     let vsCurrencyItem = queryItems?.first { $0.name == .queryParamVsCurrency }
                     expect(vsCurrencyItem?.value).to(equal("usd,eur,gbp"))
+
+                    let precisionItem = queryItems?.first { $0.name == .queryParamPrecision }
+                    expect(precisionItem?.value).to(equal(String(precision)))
                 }
             }
         }
         
         describe("Endpoint makeRequest()") {
-            let endpoint = CoinGeckoEndpoint.historicalPrice(days: 7, currencies: [.usd])
+            let endpoint = CoinGeckoEndpoint.historicalPrice(days: 7, currency: .usd)
             
             it("should create a valid URLRequest") {
                 expect {

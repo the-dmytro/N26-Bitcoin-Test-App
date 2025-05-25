@@ -33,6 +33,7 @@ extension String {
     static let queryParamDays = "days"
     static let queryParamDate = "date"
     static let queryParamLocalization = "localization"
+    static let queryParamPrecision = "precision"
     
     // MARK: - Query Parameter Values
     static let queryValueBitcoin = "bitcoin"
@@ -42,4 +43,7 @@ extension String {
     static let currencyUSD = "usd"
     static let currencyEUR = "eur"
     static let currencyGBP = "gbp"
+
+    // MARK: – Date Formats
+    static let dateFormatDDMMYYYY = "dd-MM-yyyy"
 } 

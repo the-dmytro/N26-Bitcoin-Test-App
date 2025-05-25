@@ -7,8 +7,40 @@
 
 import Foundation
 
+struct SimplePriceResponse: Decodable {
+    let prices: [Coin: [Currency: Double]]
+
+    init(from decoder: Decoder) throws {
+        let rawDict = try decoder.singleValueContainer().decode([String: [String: Double]].self)
+        var result: [Coin: [Currency: Double]] = [:]
+
+        for (coinKey, currencyDict) in rawDict {
+            if let coin = Coin(rawValue: coinKey) {
+                var mapped: [Currency: Double] = [:]
+                for (currencyKey, value) in currencyDict {
+                    if let currency = Currency(rawValue: currencyKey) {
+                        mapped[currency] = value
+                    }
+                }
+                result[coin] = mapped
+            }
+        }
+
+        prices = result
+    }
+}
+
 struct MarketChartResponse: Decodable {
     let prices: [PriceEntry]
+
+    enum CodingKeys: String, CodingKey {
+        case prices
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        prices = try container.decode([PriceEntry].self, forKey: .prices)
+    }
 
     struct PriceEntry: Decodable {
         let timestamp: TimeInterval
@@ -23,10 +55,16 @@ struct MarketChartResponse: Decodable {
 }
 
 struct CoinHistoryResponse: Decodable {
-    let marketData: MarketData
+    let prices: [Currency: Double]
 
     enum CodingKeys: String, CodingKey {
         case marketData = "market_data"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let marketData = try container.decode(MarketData.self, forKey: .marketData)
+        prices = marketData.currentPrice
     }
 
     struct MarketData: Decodable {

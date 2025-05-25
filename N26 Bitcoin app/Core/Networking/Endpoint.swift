@@ -11,6 +11,8 @@ enum HTTPMethod: String {
     case get = "GET" // There is only GET in use, add other methods if needed
 }
 
+// MARK: - Endpoint Protocol
+
 protocol Endpoint {
     var baseURL: URL { get }
     var path: String { get }
@@ -40,6 +42,8 @@ extension Endpoint {
     }
 }
 
+// MARK: - CoinGecko API Endpoint Configuration
+
 struct CoinGeckoAPIConfiguration {
     var baseURLComponents: URLComponents {
         var components = URLComponents()
@@ -52,10 +56,12 @@ struct CoinGeckoAPIConfiguration {
     let defaultHeaders = [String.headerAccept: String.contentTypeJSON]
 }
 
+// MARK: - CoinGecko API Endpoint
+
 enum CoinGeckoEndpoint: Endpoint {
-    case historicalPrice(days: UInt, currencies: [Currency])
-    case priceAtDate(date: String)
-    case currentPrice(currencies: [Currency])
+    case historicalPrice(days: UInt, currency: Currency)
+    case priceAtDate(date: Date)
+    case currentPrice(currencies: [Currency], precision: Int)
 
     var baseURL: URL {
         guard let url = CoinGeckoAPIConfiguration().baseURLComponents.url else {
@@ -83,9 +89,9 @@ enum CoinGeckoEndpoint: Endpoint {
 
     var queryItems: [URLQueryItem]? {
         switch self {
-        case .historicalPrice(let days, let currencies):
+        case .historicalPrice(let days, let currency):
             return [
-                .vsCurrency(currencies),
+                .vsCurrency([currency]),
                 .days(days)
             ]
         case .priceAtDate(let date):
@@ -93,10 +99,11 @@ enum CoinGeckoEndpoint: Endpoint {
                 .date(date),
                 .localization
             ]
-        case .currentPrice(let currencies):
+        case .currentPrice(let currencies, let precision):
             return [
                 .ids,
-                .vsCurrency(currencies)
+                .vsCurrency(currencies),
+                .precision(precision)
             ]
         }
     }
@@ -104,30 +111,28 @@ enum CoinGeckoEndpoint: Endpoint {
 
 // MARK: - Private Extensions
 
-fileprivate extension String {
-    static let ids = "ids"
-    static let vsCurrency = "vs_currency"
-    static let days = "days"
-    static let date = "date"
-    static let localization = "localization"
-    static let bitcoin = "bitcoin"
-    static let usd = "usd"
-    static let eur = "eur"
-    static let gbp = "gbp"
-    static let falseValue = "false"
-}
-
 fileprivate extension URLQueryItem {
-    static let ids = URLQueryItem(name: .ids, value: .bitcoin)
-    
+    static let ids = URLQueryItem(name: .queryParamIds, value: .queryValueBitcoin)
+    static let localization = URLQueryItem(name: .queryParamLocalization, value: .queryValueFalse)
+
     static func vsCurrency(_ currencies: [Currency]) -> URLQueryItem {
-        URLQueryItem(name: .vsCurrency, value: currencies.map(\.rawValue).joined(separator: ","))
+        URLQueryItem(name: .queryParamVsCurrency, value: currencies.map(\.rawValue).joined(separator: ","))
     }
     static func days(_ days: UInt) -> URLQueryItem {
-        URLQueryItem(name: .days, value: String(days))
+        URLQueryItem(name: .queryParamDays, value: String(days))
     }
-    static func date(_ date: String) -> URLQueryItem {
-        URLQueryItem(name: .date, value: date)
+    static func date(_ date: Date) -> URLQueryItem {
+        URLQueryItem(name: .queryParamDate, value: date.ddMMyyyyFormat())
     }
-    static let localization = URLQueryItem(name: .localization, value: .falseValue)
+    static func precision(_ precision: Int) -> URLQueryItem {
+        URLQueryItem(name: .queryParamPrecision, value: String(precision))
+    }
+}
+
+extension Date {
+    func ddMMyyyyFormat() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = .dateFormatDDMMYYYY
+        return formatter.string(from: self)
+    }
 }
