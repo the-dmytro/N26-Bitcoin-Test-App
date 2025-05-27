@@ -53,7 +53,12 @@ struct CoinGeckoAPIConfiguration {
         return components
     }
     
-    let defaultHeaders = [String.headerAccept: String.contentTypeJSON]
+    var defaultHeaders: [String: String] {
+        [
+            String.headerAccept: String.contentTypeJSON,
+            String.apiKey: Secrets.apiKey
+        ]
+    }
 }
 
 // MARK: - CoinGecko API Endpoint
