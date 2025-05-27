@@ -12,6 +12,21 @@ protocol Assembly {
     func assemble(into container: Container)
 }
 
+struct SecretsAssembly: Assembly {
+    @MainActor
+    func assemble(into container: Container) {
+        let secrets: Secrets = CoinGeckoSecrets()
+        container.register(Secrets.self) { secrets }
+    }
+}
+
+struct APIConfigurationAssembly: Assembly {
+    @MainActor
+    func assemble(into container: Container) {
+        container.register(APIConfiguration.self) { CoinGeckoAPIConfiguration(secrets: container.resolve()) }
+    }
+}
+
 struct NetworkAssembly: Assembly {
     @MainActor
     func assemble(into container: Container) {
@@ -47,6 +62,8 @@ struct UseCaseAssembly: Assembly {
 struct RootAssembly: Assembly {
     @MainActor
     func assemble(into container: Container) {
+        SecretsAssembly().assemble(into: container)
+        APIConfigurationAssembly().assemble(into: container)
         NetworkAssembly().assemble(into: container)
         RepositoryAssembly().assemble(into: container)
         UseCaseAssembly().assemble(into: container)

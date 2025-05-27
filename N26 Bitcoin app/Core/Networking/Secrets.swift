@@ -7,12 +7,16 @@
 
 import Foundation
 
-struct Secrets {
-    static let resourceName = "Keys"
-    static let extensionName = "plist"
-    static let apiKeyKey = "API_KEY"
+protocol Secrets {
+    var apiKey: String { get }
+}
 
-    static var apiKey: String {
+struct CoinGeckoSecrets: Secrets {
+    let resourceName = "Keys"
+    let extensionName = "plist"
+    let apiKeyKey = "API_KEY"
+
+    var apiKey: String {
         guard
             let url = Bundle.main.url(forResource: resourceName, withExtension: extensionName),
             let data = try? Data(contentsOf: url),

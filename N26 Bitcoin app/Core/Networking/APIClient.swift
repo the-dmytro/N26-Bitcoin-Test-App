@@ -14,14 +14,21 @@ enum APIError: Error {
 }
 
 protocol APIClient {
+    var requestBuilder: RequestBuilder { get }
     func send<T: Decodable>(_ endpoint: Endpoint) async -> Result<T, APIError>
 }
 
 final class URLSessionAPIClient: APIClient {
+    let requestBuilder: RequestBuilder
+
+    init(requestBuilder: RequestBuilder) {
+        self.requestBuilder = requestBuilder
+    }
+
     func send<T: Decodable>(_ endpoint: Endpoint) async -> Result<T, APIError> {
         let request: URLRequest
         do {
-            request = try endpoint.makeRequest()
+            request = try requestBuilder.makeRequest()
         } catch {
             return .failure(.networkError(error))
         }

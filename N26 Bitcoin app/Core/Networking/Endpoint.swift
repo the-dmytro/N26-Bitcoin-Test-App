@@ -11,9 +11,7 @@ enum HTTPMethod: String {
     case get = "GET" // There is only GET in use, add other methods if needed
 }
 
-// MARK: - Endpoint Protocol
-
-protocol Endpoint {
+protocol RequestBuilder {
     var baseURL: URL { get }
     var path: String { get }
     var method: HTTPMethod { get }
@@ -21,12 +19,8 @@ protocol Endpoint {
     var queryItems: [URLQueryItem]? { get }
 }
 
-extension Endpoint {
-    func makeRequest() throws -> URLRequest {
-        guard let baseURL = CoinGeckoAPIConfiguration().baseURLComponents.url else {
-            throw URLError(.badURL)
-        }
-        
+extension RequestBuilder {
+    func makeRequest(_ endpoint: Endpoint) throws -> URLRequest {
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
         components.path += path
         components.queryItems = queryItems
@@ -42,9 +36,26 @@ extension Endpoint {
     }
 }
 
+// MARK: - Endpoint Protocol
+
+protocol Endpoint {
+    var baseURL: URL { get }
+    var path: String { get }
+    var method: HTTPMethod { get }
+    var headers: [String: String] { get }
+    var queryItems: [URLQueryItem]? { get }
+}
+
+protocol APIConfiguration {
+    var baseURLComponents: URLComponents { get }
+    var defaultHeaders: [String: String] { get }
+}
+
 // MARK: - CoinGecko API Endpoint Configuration
 
-struct CoinGeckoAPIConfiguration {
+struct CoinGeckoAPIConfiguration: APIConfiguration {
+    let secrets: Secrets
+    
     var baseURLComponents: URLComponents {
         var components = URLComponents()
         components.scheme = .coinGeckoScheme
@@ -53,7 +64,17 @@ struct CoinGeckoAPIConfiguration {
         return components
     }
     
-    let defaultHeaders = [String.headerAccept: String.contentTypeJSON]
+    var defaultHeaders: [String: String] {
+        [String.headerAccept: String.contentTypeJSON, String.apiKey: secrets.apiKey]
+    }
+}
+
+struct CoinGeckoRequestBuilder: RequestBuilder {
+    let baseURL: URL
+    let path: String
+    let method: HTTPMethod
+    let headers: [String: String]
+    let queryItems: [URLQueryItem]?
 }
 
 // MARK: - CoinGecko API Endpoint
@@ -109,6 +130,14 @@ enum CoinGeckoEndpoint: Endpoint {
     }
 }
 
+extension Date {
+    func ddMMyyyyFormat() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = .dateFormatDDMMYYYY
+        return formatter.string(from: self)
+    }
+}
+
 // MARK: - Private Extensions
 
 fileprivate extension URLQueryItem {
@@ -126,13 +155,5 @@ fileprivate extension URLQueryItem {
     }
     static func precision(_ precision: Int) -> URLQueryItem {
         URLQueryItem(name: .queryParamPrecision, value: String(precision))
-    }
-}
-
-extension Date {
-    func ddMMyyyyFormat() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = .dateFormatDDMMYYYY
-        return formatter.string(from: self)
     }
 }
