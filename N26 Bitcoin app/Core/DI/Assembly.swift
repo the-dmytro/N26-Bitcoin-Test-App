@@ -22,8 +22,9 @@ struct NetworkAssembly: Assembly {
 struct RepositoryAssembly: Assembly {
     @MainActor
     func assemble(into container: Container) {
+        let repository: AppRepository = Repository(initialState: AppState(), reducer: AppReducer())
         container.register(AppRepository.self) {
-            Repository(initialState: AppState(), reducer: AppReducer())
+            repository
         }
     }
 }
