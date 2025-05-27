@@ -23,4 +23,5 @@ enum SelectedDayPriceAction: Action {
     case load(date: Date)
     case success(prices: [Price])
     case failure(Error)
+    case reset
 }

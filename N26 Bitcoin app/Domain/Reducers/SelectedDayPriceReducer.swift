@@ -24,6 +24,8 @@ struct SelectedDayPriceReducer: Reducer {
                 state.loadingState = .loaded
             case .failure(let error):
                 state.loadingState = .loadingError(error)
+            case .reset:
+                state = SelectedDayPriceState()
             }
         default:
             break

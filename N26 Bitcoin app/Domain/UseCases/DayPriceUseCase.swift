@@ -8,7 +8,12 @@
 import Foundation
 
 struct DayPriceUseCase: UseCase {
-    typealias Input = Date
+    struct DayPriceInput {
+        let date: Date
+        let currencies: [Currency]
+    }
+
+    typealias Input = DayPriceInput
     typealias Output = Void
     typealias RepoStateType = AppState
     typealias RepoReducerType = AppReducer
@@ -21,7 +26,21 @@ struct DayPriceUseCase: UseCase {
         self.apiClient = apiClient
     }
 
-    func execute(input: Date) async -> Void {
-        return ()
+    func execute(input: DayPriceInput) async -> Void {
+        await repository.dispatch(SelectedDayPriceAction.load(date: input.date))
+
+        let result: Result<SimplePriceResponse, APIError> = await apiClient.send(CoinGeckoEndpoint.priceAtDate(date: input.date))
+
+        switch result {
+        case .success(let response):
+            let prices = input.currencies.compactMap { currency in
+                response.prices[.bitcoin]?[currency].map {
+                    Price(value: $0, currency: currency)
+                }
+            }
+            await repository.dispatch(SelectedDayPriceAction.success(prices: prices))
+        case .failure(let error):
+            await repository.dispatch(SelectedDayPriceAction.failure(error))
+        }
     }
 }
