@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Core Protocols
-protocol State {}
+protocol State: Equatable {}
 
 protocol Action {}
 

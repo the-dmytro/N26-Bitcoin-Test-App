@@ -16,6 +16,7 @@ extension String {
     
     // MARK: - HTTP Headers
     static let headerAccept = "Accept"
+    static let apiKey = "x-cg-demo-api-key"
     
     // MARK: - API URL Components
     static let coinGeckoScheme = "https"
