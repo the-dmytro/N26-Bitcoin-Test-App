@@ -8,35 +8,19 @@
 import Foundation
 import Combine
 
-enum PriceHistoryLoadingState: Equatable {
-    case loading
-    case loaded([Price])
-    case error(Error)
-
-    static func == (lhs: PriceHistoryLoadingState, rhs: PriceHistoryLoadingState) -> Bool {
-        switch (lhs, rhs) {
-        case (.loading, .loading):
-            return true
-        case (.loaded(let lhsPrices), .loaded(let rhsPrices)):
-            return lhsPrices == rhsPrices
-        case (.error(let lhsError), .error(let rhsError)): 
-            return lhsError.localizedDescription == rhsError.localizedDescription
-        default:
-            return false
-        }
-    }
-}
-
 @MainActor
 class PriceHistoryViewModel: ObservableObject {
-    
-    @Published var currentPriceState: PriceHistoryLoadingState = .loading
-    @Published var historicalPriceState: PriceHistoryLoadingState = .loading
+    private let currency: Currency = .eur
+    private let days: UInt = 14
+    private let precision: Int = 2
 
     private let repository: AppRepository
     private let historicalPriceUseCase: HistoricalPriceUseCase
     private let currentPriceUseCase: CurrentPriceUseCase
     private var cancellables: Set<AnyCancellable> = []
+
+    @Published var currentPriceState: PriceLoadingState = .notLoaded
+    @Published var historicalPriceState: PriceLoadingState = .notLoaded
 
     init(repository: AppRepository,
          historicalPriceUseCase: HistoricalPriceUseCase,
@@ -50,20 +34,20 @@ class PriceHistoryViewModel: ObservableObject {
     
     func onAppear() {
         Task {
-            await historicalPriceUseCase.execute(input: .init(days: 14, currency: .usd))
-            await currentPriceUseCase.execute(input: .init(currencies: [.usd], precision: 2))
+            await historicalPriceUseCase.execute(input: .init(days: days, currency: currency))
+            await currentPriceUseCase.execute(input: .init(currencies: [currency], precision: precision))
         }
     }
 
     func retryCurrentPrice() {
         Task {
-            await currentPriceUseCase.execute(input: .init(currencies: [.usd], precision: 2))
+            await currentPriceUseCase.execute(input: .init(currencies: [currency], precision: precision))
         }
     }
 
     func retryHistoricalPrice() {
         Task {
-            await historicalPriceUseCase.execute(input: .init(days: 14, currency: .usd))
+            await historicalPriceUseCase.execute(input: .init(days: days, currency: currency))
         }
     }
 
@@ -83,27 +67,27 @@ class PriceHistoryViewModel: ObservableObject {
     
     private func updateHistoricalPriceState(prices: [Price], loadingState: LoadingState) {
         switch loadingState {
+        case .notLoaded:
+            historicalPriceState = .notLoaded
         case .loaded:
             historicalPriceState = .loaded(prices)
         case .loading:
             historicalPriceState = .loading
         case .loadingError(let error):
             historicalPriceState = .error(error)
-        default:
-            break
         }
     }
 
     private func updateCurrentPriceState(prices: [Price], loadingState: LoadingState) {
         switch loadingState {
+        case .notLoaded:
+            currentPriceState = .notLoaded
         case .loaded:
             currentPriceState = .loaded(prices)
         case .loading:
             currentPriceState = .loading
         case .loadingError(let error):
             currentPriceState = .error(error)
-        default:
-            break
         }
     }
 }

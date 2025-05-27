@@ -34,11 +34,13 @@ struct PriceHistoryView: View {
 }
 
 struct PriceHistorySectionView: View {
-    let state: PriceHistoryLoadingState
+    let state: PriceLoadingState
     let retryAction: (() -> Void)
 
     var body: some View {
         switch state {
+        case .notLoaded:
+            EmptyView()
         case .loading:
             LoadingView()
         case .loaded(let prices):
@@ -56,7 +58,7 @@ struct PriceHistoryViewCell: View {
 
     var body: some View {
         HStack {
-            Text(String(format: "%.2f", price.value))
+            Text(String(format: .formatStringPrice, price.value))
             Spacer()
             Text(price.currency.rawValue.uppercased())
                 .font(.subheadline)
