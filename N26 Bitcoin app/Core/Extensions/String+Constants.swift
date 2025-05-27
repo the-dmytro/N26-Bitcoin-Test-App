@@ -47,4 +47,10 @@ extension String {
 
     // MARK: – Date Formats
     static let dateFormatDDMMYYYY = "dd-MM-yyyy"
+
+    // MARK: - Navigation Titles
+    static let sectionTitleCurrentPrice = "Current Price"
+    static let sectionTitleHistoricalPrice = "Historical Price"
+    static let navigationTitlePriceHistory = "Price History"
+    static let navigationTitlePriceDetail = "Price Detail"
 } 

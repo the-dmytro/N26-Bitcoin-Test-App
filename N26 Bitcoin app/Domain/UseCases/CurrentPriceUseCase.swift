@@ -42,6 +42,5 @@ struct CurrentPriceUseCase: UseCase {
         case .failure(let error):
             await repository.dispatch(CurrentPriceAction.failure(error))
         }
-        return ()
     }
 }
