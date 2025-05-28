@@ -29,13 +29,16 @@ struct DayPriceUseCase: UseCase {
     func execute(input: DayPriceInput) async -> Void {
         await repository.dispatch(SelectedDayPriceAction.load(date: input.date))
 
-        let result: Result<SimplePriceResponse, APIError> = await apiClient.send(CoinGeckoEndpoint.priceAtDate(date: input.date))
+        let result: Result<CoinHistoryResponse, APIError> = await apiClient.send(CoinGeckoEndpoint.priceAtDate(date: input.date))
 
         switch result {
         case .success(let response):
             let prices = input.currencies.compactMap { currency in
-                response.prices[.bitcoin]?[currency].map {
-                    Price(value: $0, currency: currency)
+                if let price = response.prices[currency] {
+                    return Price(value: price, currency: currency)
+                }
+                else {
+                    return nil
                 }
             }
             await repository.dispatch(SelectedDayPriceAction.success(prices: prices))
