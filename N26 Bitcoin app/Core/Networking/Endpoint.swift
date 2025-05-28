@@ -112,7 +112,7 @@ enum CoinGeckoEndpoint: Endpoint {
         case .currentPrice(let currencies, let precision):
             return [
                 .ids,
-                .vsCurrency(currencies),
+                .vsCurrencies(currencies),
                 .precision(precision),
                 .includeMarketCap
             ]
@@ -130,6 +130,9 @@ fileprivate extension URLQueryItem {
 
     static func vsCurrency(_ currencies: [Currency]) -> URLQueryItem {
         URLQueryItem(name: .queryParamVsCurrency, value: currencies.map(\.rawValue).joined(separator: ","))
+    }
+    static func vsCurrencies(_ currencies: [Currency]) -> URLQueryItem {
+        URLQueryItem(name: .queryParamVsCurrencies, value: currencies.map(\.rawValue).joined(separator: ","))
     }
     static func days(_ days: UInt) -> URLQueryItem {
         URLQueryItem(name: .queryParamDays, value: String(days))
