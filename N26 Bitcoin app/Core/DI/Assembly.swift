@@ -58,6 +58,7 @@ struct ViewModelAssembly: Assembly {
             PriceHistoryViewModel(repository: container.resolve(),
                                   historicalPriceUseCase: container.resolve(),
                                   currentPriceUseCase: container.resolve(),
+                                  selectedDayUseCase: container.resolve(),
                                   refreshTimer: container.resolve())
         }
         container.register(PriceDetailViewModel.self) {

@@ -8,19 +8,36 @@
 import SwiftUI
 
 struct PriceDetailView: View {
+    @Environment(\.container) private var container
+
+    let date: Date
+    
+    var body: some View {
+        PriceDetailContentView(date: date, viewModel: container.resolve())
+    }
+}
+
+struct PriceDetailContentView: View {
     @StateObject private var viewModel: PriceDetailViewModel
 
-    init(viewModel: PriceDetailViewModel) {
+    let date: Date
+
+    init(date: Date, viewModel: PriceDetailViewModel) {
+        self.date = date
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
         List {
-            Section(header: Text(viewModel.selectedDateText)) {
-                PriceHistorySectionView(state: viewModel.priceLoadingState, retryAction: viewModel.retry)
-            }
+            PriceHistorySectionView(title: viewModel.selectedDateText,
+                                    state: viewModel.priceLoadingState,
+                                    retryAction: viewModel.retry,
+                                    selectAction: nil)
         }
         .navigationTitle(String.navigationTitlePriceDetail)
+        .onAppear {
+            viewModel.loadPrice(for: date)
+        }
         .onDisappear {
             viewModel.onDisappear()
         }

@@ -10,7 +10,7 @@ import Combine
 
 @MainActor
 class PriceDetailViewModel: ObservableObject {
-    private let currencies: Set<Currency> = [.eur, .usd, .gbp]
+    private let currencies: [Currency] = [.eur, .usd, .gbp]
 
     private let repository: AppRepository
     private let priceUseCase: DayPriceUseCase
@@ -35,11 +35,11 @@ class PriceDetailViewModel: ObservableObject {
         loadPrice(for: selectedDate ?? Date())
     }
 
-    private func loadPrice(for date: Date) {
+    func loadPrice(for date: Date) {
         selectedDate = date
         selectedDateText = date.formatted(date: .abbreviated, time: .omitted)
         Task {
-            await priceUseCase.execute(input: .init(date: date, currencies: Array(currencies)))
+            await priceUseCase.execute(input: .init(date: date, currencies: currencies))
         }
     }
 

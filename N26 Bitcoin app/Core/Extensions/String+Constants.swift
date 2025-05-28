@@ -31,6 +31,7 @@ extension String {
     // MARK: - Query Parameter Names
     static let queryParamIds = "ids"
     static let queryParamVsCurrency = "vs_currency"
+    static let queryParamVsCurrencies = "vs_currencies"
     static let queryParamDays = "days"
     static let queryParamDate = "date"
     static let queryParamLocalization = "localization"

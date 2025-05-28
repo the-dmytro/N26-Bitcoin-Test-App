@@ -24,16 +24,25 @@ struct PriceHistoryContentView: View {
 
     var body: some View {
         NavigationView {
-            List {
-                Section(header: Text(String.sectionTitleCurrentPrice)) {
-                    PriceHistorySectionView(state: viewModel.currentPriceState, retryAction: viewModel.retryCurrentPrice)
+            ZStack {
+                NavigationLink(destination: PriceDetailView(date: viewModel.selectedDate ?? Date()),
+                               isActive: .constant(viewModel.selectedDate != nil)) {
+                    EmptyView()
                 }
 
-                Section(header: Text(String.sectionTitleHistoricalPrice)) {
-                    PriceHistorySectionView(state: viewModel.historicalPriceState, retryAction: viewModel.retryHistoricalPrice)
+                List {
+                    PriceHistorySectionView(title: String.sectionTitleCurrentPrice,
+                                            state: viewModel.currentPriceState,
+                                            retryAction: viewModel.retryCurrentPrice,
+                                            selectAction: nil)
+
+                    PriceHistorySectionView(title: String.sectionTitleHistoricalPrice,
+                                            state: viewModel.historicalPriceState,
+                                            retryAction: viewModel.retryHistoricalPrice,
+                                            selectAction: { viewModel.selectHistoricalPrice(at: $0) })
                 }
+                .navigationTitle(String.navigationTitlePriceHistory)
             }
-            .navigationTitle(String.navigationTitlePriceHistory)
             .onAppear {
                 viewModel.onAppear()
             }
@@ -42,35 +51,45 @@ struct PriceHistoryContentView: View {
 }
 
 struct PriceHistorySectionView: View {
+    let title: String
     let state: PriceLoadingState
     let retryAction: (() -> Void)
+    let selectAction: ((Int) -> Void)?
 
     var body: some View {
-        switch state {
-        case .notLoaded:
-            EmptyView()
-        case .loading:
-            LoadingView()
-        case .loaded(let prices):
-            ForEach(prices.indices, id: \.self) { index in
-                PriceHistoryViewCell(price: prices[index])
+        Section(header: Text(title)) {
+            switch state {
+            case .notLoaded:
+                EmptyView()
+            case .loading:
+                LoadingView()
+            case .loaded(let prices):
+                ForEach(prices.indices, id: \.self) { index in
+                    PriceHistoryViewCell(price: prices[index],
+                                         action: { selectAction?(index) })
+                }
+            case .error(let error):
+                ErrorReloadView(error: error, retryAction: retryAction)
             }
-        case .error(let error):
-            ErrorReloadView(error: error, retryAction: retryAction)
         }
     }
 }
 
 struct PriceHistoryViewCell: View {
     let price: Price
+    let action: () -> Void
 
     var body: some View {
-        HStack {
-            Text(String(format: .formatStringPrice, price.value))
-            Spacer()
-            Text(price.currency.rawValue.uppercased())
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+        Button(action: action) {
+            HStack {
+                Text(String(format: .formatStringPrice, price.value))
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Spacer()
+                Text(price.currency.rawValue.uppercased())
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
         }
     }
 }

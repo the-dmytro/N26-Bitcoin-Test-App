@@ -10,6 +10,10 @@ import Combine
 
 @MainActor
 class PriceHistoryViewModel: ObservableObject {
+    enum DetailScreenState: Hashable {
+        case selected(date: Date)
+    }
+
     private let currency: Currency = .eur
     private let days: UInt = 14
     private let precision: Int = 2
@@ -18,28 +22,40 @@ class PriceHistoryViewModel: ObservableObject {
     private let repository: AppRepository
     private let historicalPriceUseCase: HistoricalPriceUseCase
     private let currentPriceUseCase: CurrentPriceUseCase
+    private let selectedDayUseCase: DayPriceUseCase
     private let refreshTimer: RefreshTimer
     private var cancellables: Set<AnyCancellable> = []
 
     @Published var currentPriceState: PriceLoadingState = .notLoaded
     @Published var historicalPriceState: PriceLoadingState = .notLoaded
+    @Published var selectedDate: Date?
 
     init(repository: AppRepository,
          historicalPriceUseCase: HistoricalPriceUseCase,
          currentPriceUseCase: CurrentPriceUseCase,
+         selectedDayUseCase: DayPriceUseCase,
          refreshTimer: RefreshTimer) {
         self.repository = repository
         self.historicalPriceUseCase = historicalPriceUseCase
         self.currentPriceUseCase = currentPriceUseCase
+        self.selectedDayUseCase = selectedDayUseCase
         self.refreshTimer = refreshTimer
 
         setupSubscriptions()
     }
     
     func onAppear() {
-        loadCurrentPrice()
-        loadHistoricalPrice()
+        if currentPriceState == .notLoaded {
+            loadCurrentPrice()
+        }
+        if historicalPriceState == .notLoaded {
+            loadHistoricalPrice()
+        }
         startRefreshTimer()
+    }
+
+    func onDisappear() {
+        stopRefreshTimer()
     }
 
     // MARK: - User actions
@@ -50,6 +66,11 @@ class PriceHistoryViewModel: ObservableObject {
 
     func retryHistoricalPrice() {
         loadHistoricalPrice()
+    }
+
+    func selectHistoricalPrice(at index: Int) {
+        let date = convertToDate(at: index)
+        loadPrice(for: date)
     }
 
     // MARK: - Private functions
@@ -66,8 +87,22 @@ class PriceHistoryViewModel: ObservableObject {
         }
     }
 
+    private func convertToDate(at index: Int) -> Date {
+        Date(timeIntervalSinceNow: -TimeInterval(index * 24 * 60 * 60))
+    }
+
+    private func loadPrice(for date: Date) {
+        Task {
+            await selectedDayUseCase.execute(input: .init(date: date, currencies: [.eur, .usd, .gbp]))
+        }
+    }
+
     private func startRefreshTimer() {
         refreshTimer.start(interval: refreshInterval)
+    }
+
+    private func stopRefreshTimer() {
+        refreshTimer.stop()
     }
 
     // MARK: - Data
@@ -87,6 +122,13 @@ class PriceHistoryViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
+        repository.observe(\.selectedDay)
+            .sink { [weak self] selectedDayState in
+                guard let self = self else { return }
+                self.updateSelectedDayState(date: selectedDayState.date)
+            }
+            .store(in: &cancellables)
+
         refreshTimer.publisher
             .sink { [weak self] in
                 guard let self = self else { return }
@@ -100,6 +142,9 @@ class PriceHistoryViewModel: ObservableObject {
         case .notLoaded:
             historicalPriceState = .notLoaded
         case .loaded:
+            let prices = prices.reversed().dropFirst().map {
+                Price(value: $0.value, currency: $0.currency)
+            }
             historicalPriceState = .loaded(prices)
         case .loading:
             historicalPriceState = .loading
@@ -119,5 +164,9 @@ class PriceHistoryViewModel: ObservableObject {
         case .loadingError(let error):
             currentPriceState = .error(error)
         }
+    }
+
+    private func updateSelectedDayState(date: Date?) {
+        selectedDate = date
     }
 }
