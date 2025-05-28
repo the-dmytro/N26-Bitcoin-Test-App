@@ -8,6 +8,14 @@
 import SwiftUI
 
 struct PriceHistoryView: View {
+    @Environment(\.container) private var container
+
+    var body: some View {
+        PriceHistoryContentView(viewModel: container.resolve())
+    }
+}
+
+struct PriceHistoryContentView: View {
     @StateObject private var viewModel: PriceHistoryViewModel
 
     init(viewModel: PriceHistoryViewModel) {

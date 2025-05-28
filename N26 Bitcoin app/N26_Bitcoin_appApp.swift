@@ -9,15 +9,16 @@ import SwiftUI
 
 @main
 struct N26_Bitcoin_appApp: App {
-    let container = Container()
-
-    init() {
+    let container: Container = {
+        let container = Container()
         RootAssembly().assemble(into: container)
-    }
+        return container
+    }()
 
     var body: some Scene {
         WindowGroup {
-            PriceHistoryView(viewModel: container.resolve())
+            PriceHistoryView()
         }
+        .environment(\.container, container)
     }
 }
