@@ -22,34 +22,44 @@ class PriceHistoryViewModel: ObservableObject {
     @Published var currentPriceState: PriceLoadingState = .notLoaded
     @Published var historicalPriceState: PriceLoadingState = .notLoaded
 
-    init(repository: AppRepository,
-         historicalPriceUseCase: HistoricalPriceUseCase,
-         currentPriceUseCase: CurrentPriceUseCase) {
-        self.repository = repository
-        self.historicalPriceUseCase = historicalPriceUseCase
-        self.currentPriceUseCase = currentPriceUseCase
+    init(container: Container) {
+        self.repository = container.resolve()
+        self.historicalPriceUseCase = container.resolve()
+        self.currentPriceUseCase = container.resolve()
 
         setupSubscriptions()
     }
     
     func onAppear() {
-        Task {
-            await historicalPriceUseCase.execute(input: .init(days: days, currency: currency))
-            await currentPriceUseCase.execute(input: .init(currencies: [currency], precision: precision))
-        }
+        loadCurrentPrice()
+        loadHistoricalPrice()
     }
 
+    // MARK: - User actions
+
     func retryCurrentPrice() {
-        Task {
-            await currentPriceUseCase.execute(input: .init(currencies: [currency], precision: precision))
-        }
+        loadCurrentPrice()
     }
 
     func retryHistoricalPrice() {
+        loadHistoricalPrice()
+    }
+
+    // MARK: - Private functions
+
+    private func loadCurrentPrice() {
         Task {
-            await historicalPriceUseCase.execute(input: .init(days: days, currency: currency))
+            await currentPriceUseCase.execute(input: .init(currencies: [currency], precision: precision))
         }
     }
+    
+    private func loadHistoricalPrice() {
+        Task {
+            await historicalPriceUseCase.execute(input: .init(days: days, currency: currency, precision: precision))
+        }
+    }
+
+    // MARK: - Data
 
     private func setupSubscriptions() {
         repository.observe(\.historicalPrice)

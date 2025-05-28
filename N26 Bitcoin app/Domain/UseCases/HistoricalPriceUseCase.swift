@@ -11,6 +11,7 @@ struct HistoricalPriceUseCase: UseCase {
     struct HistoricalPriceInput {
         let days: UInt
         let currency: Currency
+        let precision: Int
     }
 
     typealias Input = HistoricalPriceInput
@@ -29,7 +30,7 @@ struct HistoricalPriceUseCase: UseCase {
     func execute(input: HistoricalPriceInput) async -> Void {
         await repository.dispatch(HistoricalPriceAction.load(days: input.days, currency: input.currency))
         
-        let result: Result<MarketChartResponse, APIError> = await apiClient.send(CoinGeckoEndpoint.historicalPrice(days: input.days, currency: input.currency))
+        let result: Result<MarketChartResponse, APIError> = await apiClient.send(CoinGeckoEndpoint.historicalPrice(days: input.days, currency: input.currency, precision: input.precision))
 
         switch result {
         case .success(let response):

@@ -27,7 +27,7 @@ extension Endpoint {
             throw URLError(.badURL)
         }
         
-        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
+        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: true)!
         components.path += path
         components.queryItems = queryItems
 
@@ -38,6 +38,9 @@ extension Endpoint {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.allHTTPHeaderFields = headers
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        request.timeoutInterval = 10
+        request.httpShouldHandleCookies = false
         return request
     }
 }
@@ -55,7 +58,7 @@ struct CoinGeckoAPIConfiguration {
     
     var defaultHeaders: [String: String] {
         [
-            String.headerAccept: String.contentTypeJSON,
+            String.headerAccept.lowercased(): String.contentTypeJSON,
             String.apiKey: Secrets.apiKey
         ]
     }
@@ -64,7 +67,7 @@ struct CoinGeckoAPIConfiguration {
 // MARK: - CoinGecko API Endpoint
 
 enum CoinGeckoEndpoint: Endpoint {
-    case historicalPrice(days: UInt, currency: Currency)
+    case historicalPrice(days: UInt, currency: Currency, precision: Int)
     case priceAtDate(date: Date)
     case currentPrice(currencies: [Currency], precision: Int)
 
@@ -94,10 +97,12 @@ enum CoinGeckoEndpoint: Endpoint {
 
     var queryItems: [URLQueryItem]? {
         switch self {
-        case .historicalPrice(let days, let currency):
+        case .historicalPrice(let days, let currency, let precision):
             return [
                 .vsCurrency([currency]),
-                .days(days)
+                .days(days),
+                .interval,
+                .precision(precision)
             ]
         case .priceAtDate(let date):
             return [
@@ -108,7 +113,8 @@ enum CoinGeckoEndpoint: Endpoint {
             return [
                 .ids,
                 .vsCurrency(currencies),
-                .precision(precision)
+                .precision(precision),
+                .includeMarketCap
             ]
         }
     }
@@ -119,6 +125,8 @@ enum CoinGeckoEndpoint: Endpoint {
 fileprivate extension URLQueryItem {
     static let ids = URLQueryItem(name: .queryParamIds, value: .queryValueBitcoin)
     static let localization = URLQueryItem(name: .queryParamLocalization, value: .queryValueFalse)
+    static let interval = URLQueryItem(name: .queryParamInterval, value: .queryValueDaily)
+    static let includeMarketCap = URLQueryItem(name: .queryParamIncludeMarketCap, value: .queryValueFalse)
 
     static func vsCurrency(_ currencies: [Currency]) -> URLQueryItem {
         URLQueryItem(name: .queryParamVsCurrency, value: currencies.map(\.rawValue).joined(separator: ","))

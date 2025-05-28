@@ -69,10 +69,13 @@ class NetworkingSpecs: QuickSpec {
         }
         
         describe("CoinGeckoEndpoint") {
-            let currencies: [Currency] = [.usd, .eur, .gbp]
+            let testCurrencies: [Currency] = [.usd, .eur, .gbp]
+            let testPrecision: Int = 2
+            let testDays: UInt = 7
+            let testCurrency: Currency = .usd
             
             describe("historicalPrice") {
-                let endpoint = CoinGeckoEndpoint.historicalPrice(days: 7, currency: .usd)
+                let endpoint = CoinGeckoEndpoint.historicalPrice(days: testDays, currency: testCurrency, precision: testPrecision)
                 
                 it("should have correct base URL") {
                     let expectedURL = "\(String.coinGeckoScheme)://\(String.coinGeckoHost)\(String.coinGeckoAPIVersion)"
@@ -94,13 +97,13 @@ class NetworkingSpecs: QuickSpec {
                 it("should have correct query items") {
                     let queryItems = endpoint.queryItems
                     expect(queryItems).toNot(beNil())
-                    expect(queryItems?.count).to(equal(2))
+                    expect(queryItems?.count).to(equal(4))
                     
                     let vsCurrencyItem = queryItems?.first { $0.name == .queryParamVsCurrency }
-                    expect(vsCurrencyItem?.value).to(equal("usd"))
+                    expect(vsCurrencyItem?.value).to(equal(.currencyUSD))
                     
                     let daysItem = queryItems?.first { $0.name == .queryParamDays }
-                    expect(daysItem?.value).to(equal("7"))
+                    expect(daysItem?.value).to(equal(String(testDays)))
                 }
             }
             
@@ -126,8 +129,7 @@ class NetworkingSpecs: QuickSpec {
             }
             
             describe("currentPrice") {
-                let precision: Int = 2
-                let endpoint = CoinGeckoEndpoint.currentPrice(currencies: currencies, precision: precision)
+                let endpoint = CoinGeckoEndpoint.currentPrice(currencies: testCurrencies, precision: testPrecision)
                 
                 it("should have correct path") {
                     expect(endpoint.path).to(equal(.simplePricePath))
@@ -136,22 +138,28 @@ class NetworkingSpecs: QuickSpec {
                 it("should have correct query items") {
                     let queryItems = endpoint.queryItems
                     expect(queryItems).toNot(beNil())
-                    expect(queryItems?.count).to(equal(3))
+                    expect(queryItems?.count).to(equal(4))
                     
                     let idsItem = queryItems?.first { $0.name == .queryParamIds }
                     expect(idsItem?.value).to(equal(.queryValueBitcoin))
                     
                     let vsCurrencyItem = queryItems?.first { $0.name == .queryParamVsCurrency }
-                    expect(vsCurrencyItem?.value).to(equal("usd,eur,gbp"))
+                    expect(vsCurrencyItem?.value).to(equal(.currencyUSD + "," + .currencyEUR + "," + .currencyGBP))
 
                     let precisionItem = queryItems?.first { $0.name == .queryParamPrecision }
-                    expect(precisionItem?.value).to(equal(String(precision)))
+                    expect(precisionItem?.value).to(equal(String(testPrecision)))
+
+                    let includeMarketCapItem = queryItems?.first { $0.name == .queryParamIncludeMarketCap }
+                    expect(includeMarketCapItem?.value).to(equal(.queryValueFalse))
                 }
             }
         }
         
         describe("Endpoint makeRequest()") {
-            let endpoint = CoinGeckoEndpoint.historicalPrice(days: 7, currency: .usd)
+            let testPrecision: Int = 2
+            let testDays: UInt = 7
+            let testCurrency: Currency = .usd
+            let endpoint = CoinGeckoEndpoint.historicalPrice(days: testDays, currency: testCurrency, precision: testPrecision)
             
             it("should create a valid URLRequest") {
                 expect {
@@ -161,7 +169,8 @@ class NetworkingSpecs: QuickSpec {
                     let expectedBaseURL = "\(String.coinGeckoScheme)://\(String.coinGeckoHost)\(String.coinGeckoAPIVersion)\(String.bitcoinMarketChartPath)"
                     expect(request.url?.absoluteString).to(contain(expectedBaseURL))
                     expect(request.url?.absoluteString).to(contain(.queryParamVsCurrency + "=" + .currencyUSD))
-                    expect(request.url?.absoluteString).to(contain(.queryParamDays + "=7"))
+                    expect(request.url?.absoluteString).to(contain(.queryParamDays + "=" + String(testDays)))
+                    expect(request.url?.absoluteString).to(contain(.queryParamPrecision + "=" + String(testPrecision)))
                     expect(request.allHTTPHeaderFields?[.headerAccept]).to(equal(.contentTypeJSON))
                 }.toNot(throwError())
             }

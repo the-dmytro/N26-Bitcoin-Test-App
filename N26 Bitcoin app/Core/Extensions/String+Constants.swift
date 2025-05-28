@@ -35,11 +35,14 @@ extension String {
     static let queryParamDate = "date"
     static let queryParamLocalization = "localization"
     static let queryParamPrecision = "precision"
+    static let queryParamInterval = "interval"
+    static let queryParamIncludeMarketCap = "include_market_cap"
     
     // MARK: - Query Parameter Values
     static let queryValueBitcoin = "bitcoin"
     static let queryValueFalse = "false"
-    
+    static let queryValueDaily = "daily"
+
     // MARK: - Currency Values
     static let currencyUSD = "usd"
     static let currencyEUR = "eur"

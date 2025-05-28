@@ -17,9 +17,7 @@ struct N26_Bitcoin_appApp: App {
 
     var body: some Scene {
         WindowGroup {
-            PriceHistoryView(viewModel: PriceHistoryViewModel(repository: container.resolve(),
-                                                              historicalPriceUseCase: container.resolve(),
-                                                              currentPriceUseCase: container.resolve()))
+            PriceHistoryView(viewModel: PriceHistoryViewModel(container: container))
         }
     }
 }
