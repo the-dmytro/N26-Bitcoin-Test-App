@@ -42,6 +42,7 @@ struct PriceHistoryContentView: View {
                                             selectAction: { viewModel.selectHistoricalPrice(at: $0) })
                 }
                 .navigationTitle(String.navigationTitlePriceHistory)
+                .listStyle(.insetGrouped)
             }
             .onAppear {
                 viewModel.onAppear()
