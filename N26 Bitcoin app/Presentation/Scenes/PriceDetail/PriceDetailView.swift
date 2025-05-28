@@ -16,14 +16,11 @@ struct PriceDetailView: View {
 
     var body: some View {
         List {
-            Section(header: Text(viewModel.date.formatted(Date.FormatStyle().day().month().year()))) {
+            Section(header: Text(viewModel.selectedDateText)) {
                 PriceHistorySectionView(state: viewModel.priceLoadingState, retryAction: viewModel.retry)
             }
         }
         .navigationTitle(String.navigationTitlePriceDetail)
-        .onAppear {
-            viewModel.onAppear()
-        }
         .onDisappear {
             viewModel.onDisappear()
         }

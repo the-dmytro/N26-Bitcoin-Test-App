@@ -44,11 +44,36 @@ struct UseCaseAssembly: Assembly {
     }
 }
 
+struct ServicesAssembly: Assembly {
+    @MainActor
+    func assemble(into container: Container) {
+        container.register(RefreshTimer.self) { RefreshTimer() }
+    }
+}
+
+struct ViewModelAssembly: Assembly {
+    @MainActor
+    func assemble(into container: Container) {
+        container.register(PriceHistoryViewModel.self) {
+            PriceHistoryViewModel(repository: container.resolve(),
+                                  historicalPriceUseCase: container.resolve(),
+                                  currentPriceUseCase: container.resolve(),
+                                  refreshTimer: container.resolve())
+        }
+        container.register(PriceDetailViewModel.self) {
+            PriceDetailViewModel(repository: container.resolve(),
+                                 priceUseCase: container.resolve())
+        }
+    }
+}
+
 struct RootAssembly: Assembly {
     @MainActor
     func assemble(into container: Container) {
         NetworkAssembly().assemble(into: container)
         RepositoryAssembly().assemble(into: container)
         UseCaseAssembly().assemble(into: container)
+        ServicesAssembly().assemble(into: container)
+        ViewModelAssembly().assemble(into: container)
     }
 }

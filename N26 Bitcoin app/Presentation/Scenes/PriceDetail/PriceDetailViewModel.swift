@@ -15,23 +15,16 @@ class PriceDetailViewModel: ObservableObject {
     private let repository: AppRepository
     private let priceUseCase: DayPriceUseCase
     private var cancellables: Set<AnyCancellable> = []
-
-    let date: Date
+    private var selectedDate: Date?
 
     @Published var priceLoadingState: PriceLoadingState = .notLoaded
+    @Published var selectedDateText: String = ""
 
-    init(repository: AppRepository, priceUseCase: DayPriceUseCase, date: Date) {
+    init(repository: AppRepository, priceUseCase: DayPriceUseCase) {
         self.repository = repository
         self.priceUseCase = priceUseCase
-        self.date = date
 
         setupSubscriptions()
-    }
-    
-    func onAppear() {
-        Task {
-            await priceUseCase.execute(input: .init(date: date, currencies: Array(currencies)))
-        }
     }
 
     func onDisappear() {
@@ -39,6 +32,12 @@ class PriceDetailViewModel: ObservableObject {
     }
 
     func retry() {
+        loadPrice(for: selectedDate ?? Date())
+    }
+
+    private func loadPrice(for date: Date) {
+        selectedDate = date
+        selectedDateText = date.formatted(date: .abbreviated, time: .omitted)
         Task {
             await priceUseCase.execute(input: .init(date: date, currencies: Array(currencies)))
         }

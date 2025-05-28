@@ -13,19 +13,25 @@ class PriceHistoryViewModel: ObservableObject {
     private let currency: Currency = .eur
     private let days: UInt = 14
     private let precision: Int = 2
+    private let refreshInterval: TimeInterval = 5
 
     private let repository: AppRepository
     private let historicalPriceUseCase: HistoricalPriceUseCase
     private let currentPriceUseCase: CurrentPriceUseCase
+    private let refreshTimer: RefreshTimer
     private var cancellables: Set<AnyCancellable> = []
 
     @Published var currentPriceState: PriceLoadingState = .notLoaded
     @Published var historicalPriceState: PriceLoadingState = .notLoaded
 
-    init(container: Container) {
-        self.repository = container.resolve()
-        self.historicalPriceUseCase = container.resolve()
-        self.currentPriceUseCase = container.resolve()
+    init(repository: AppRepository,
+         historicalPriceUseCase: HistoricalPriceUseCase,
+         currentPriceUseCase: CurrentPriceUseCase,
+         refreshTimer: RefreshTimer) {
+        self.repository = repository
+        self.historicalPriceUseCase = historicalPriceUseCase
+        self.currentPriceUseCase = currentPriceUseCase
+        self.refreshTimer = refreshTimer
 
         setupSubscriptions()
     }
@@ -33,6 +39,7 @@ class PriceHistoryViewModel: ObservableObject {
     func onAppear() {
         loadCurrentPrice()
         loadHistoricalPrice()
+        startRefreshTimer()
     }
 
     // MARK: - User actions
@@ -59,18 +66,31 @@ class PriceHistoryViewModel: ObservableObject {
         }
     }
 
+    private func startRefreshTimer() {
+        refreshTimer.start(interval: refreshInterval)
+    }
+
     // MARK: - Data
 
     private func setupSubscriptions() {
         repository.observe(\.historicalPrice)
             .sink { [weak self] historicalPriceState in
-                self?.updateHistoricalPriceState(prices: historicalPriceState.prices, loadingState: historicalPriceState.loadingState)
+                guard let self = self else { return }
+                self.updateHistoricalPriceState(prices: historicalPriceState.prices, loadingState: historicalPriceState.loadingState)
             }
             .store(in: &cancellables)
             
         repository.observe(\.currentPrice)
             .sink { [weak self] currentPriceState in
-                self?.updateCurrentPriceState(prices: currentPriceState.prices, loadingState: currentPriceState.loadingState)
+                guard let self = self else { return }
+                self.updateCurrentPriceState(prices: currentPriceState.prices, loadingState: currentPriceState.loadingState)
+            }
+            .store(in: &cancellables)
+
+        refreshTimer.publisher
+            .sink { [weak self] in
+                guard let self = self else { return }
+                self.loadCurrentPrice()
             }
             .store(in: &cancellables)
     }
