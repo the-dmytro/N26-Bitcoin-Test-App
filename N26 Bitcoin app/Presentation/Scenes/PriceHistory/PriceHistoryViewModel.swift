@@ -13,7 +13,7 @@ class PriceHistoryViewModel: ObservableObject {
     private let currency: Currency = .eur
     private let days: UInt = 14
     private let precision: Int = 2
-    private let refreshInterval: TimeInterval = 5
+    private let refreshInterval: TimeInterval = 60
 
     private let repository: AppRepository
     private let historicalPriceUseCase: HistoricalPriceUseCase
